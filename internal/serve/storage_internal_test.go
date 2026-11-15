@@ -43,7 +43,7 @@ func TestDiskUsageOfAMissingDirectoryIsNothing(t *testing.T) {
 	}
 }
 
-// A cancelled request stops the walk rather than finishing it.
+// A canceled request stops the walk rather than finishing it.
 func TestDiskUsageStopsWhenTheRequestDoes(t *testing.T) {
 	root := t.TempDir()
 	if err := os.WriteFile(filepath.Join(root, "index.md"), []byte("x"), 0o644); err != nil {
@@ -53,6 +53,6 @@ func TestDiskUsageStopsWhenTheRequestDoes(t *testing.T) {
 	cancel()
 
 	if _, err := diskUsage(ctx, root); err == nil {
-		t.Error("a cancelled request measured the whole project")
+		t.Error("a canceled request measured the whole project")
 	}
 }
