@@ -1,11 +1,8 @@
 module github.com/kite-plus/kite
 
-go 1.27.0
-
-// Pinned exactly, not as a floor. A floating patch version means the same
-// tag rebuilt later compiles with a different compiler and produces different
-// bytes, which would make the release checksums unverifiable.
-toolchain go1.27.4
+// The minimum is a patched release, not a minor version: 1.27.4 carries the
+// security fixes of 2026-11-10, and a build on 1.27.0 would not.
+go 1.27.4
 
 require (
 	aead.dev/minisign v0.3.0

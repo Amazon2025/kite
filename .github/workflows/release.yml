@@ -156,12 +156,12 @@ jobs:
           cache: pnpm
           cache-dependency-path: web/pnpm-lock.yaml
 
-      # go.mod's toolchain directive is a floor, not a pin: the go command
-      # switches up to satisfy it but never down. Only GOTOOLCHAIN fixes the
-      # compiler exactly, and a floating compiler means the same tag rebuilt
-      # later produces different bytes.
+      # The go line is a floor, not a pin: the go command switches up to
+      # satisfy it but never down, so a newer Go on the runner would build with
+      # itself. Only GOTOOLCHAIN fixes the compiler exactly, and a floating
+      # compiler means the same tag rebuilt later produces different bytes.
       - name: Pin the toolchain
-        run: echo "GOTOOLCHAIN=$(awk '/^toolchain /{print $2}' go.mod)" >> "$GITHUB_ENV"
+        run: echo "GOTOOLCHAIN=go$(awk '/^go /{print $2}' go.mod)" >> "$GITHUB_ENV"
 
       - name: Release
         uses: goreleaser/goreleaser-action@v7

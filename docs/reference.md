@@ -1226,7 +1226,7 @@ The full reasoning, including the parts deliberately left unbuilt, is in
 
 ## Build from source
 
-Go 1.27 or newer:
+Go 1.27.4 or newer:
 
 ```bash
 make build      # ./bin/kite
