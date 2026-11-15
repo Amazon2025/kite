@@ -22,14 +22,14 @@ is what `kite init` asks in a terminal. Your name is the site's author.
 | **Settings** | the site's title, description, address, language, keywords, time zone, search engine visibility and code added to every page; the studio's own language and colors; your account: name, picture, password and sessions |
 
 An item that changed on disk since it was loaded is refused rather than
-overwritten, and the studio says so. Editing is available in English and
+overwritten, and the studio reports it. Editing is available in English and
 简体中文, chosen from the browser.
 
 A photo added in the studio loses where it was taken before it is stored,
 since what is stored is published: the GPS of its EXIF and whatever of its
 XMP gives the place, in a JPEG, PNG, WebP or AVIF, and in the previews some
 cameras keep inside a JPEG. How to turn it, what took it and when stay, its
-pixels are not touched, and the studio says when it has taken a place out.
+pixels are not touched, and the studio reports when it has taken a place out.
 A file added with git is published as it is.
 
 Tags and categories are counted the way the site lists them, so Go, go and
@@ -109,7 +109,7 @@ kite openapi > openapi.json
 ```
 
 `--admin` serves it and `--write` allows it to change the project; without
-`--write` the same API is read-only, and the studio says so beside the site's
+`--write` the same API is read-only, and the studio reports it beside the site's
 name and offers only what can be read and previewed. The studio's typed
 client is generated from that description and checked in CI, so the types it
 compiles against cannot describe an API the server does not serve.
@@ -122,7 +122,7 @@ a page asks nothing of a third party.
 
 Other themes live in `themes/`, one folder each, and `theme.name` in
 `kite.yaml` chooses one by its folder's name; `default` is always the built-in
-one. The studio lists them all, says why one cannot be used, and installs a
+one. The studio lists them all, states why one cannot be used, and installs a
 theme from a zip archive holding `theme.yaml` at its top or in the one folder
 it contains. An installed theme is checked the way a site checks one it loads,
 and one of the same name is replaced only when you confirm it. Before a theme
@@ -452,7 +452,7 @@ Only what a template shows counts: the words of an `.Inner` it leaves out are
 not the page's words, text or excerpt, so an empty
 `layouts/_shortcodes/private.html` keeps what it encloses off the site. A
 shortcode nobody defines stops the build and names its file and line rather
-than printing the tag, and the studio's preview says the same while you write.
+than printing the tag, and the studio's preview shows the same while you write.
 The visual editor cannot keep shortcodes, so an item that calls one opens as
 markdown.
 
@@ -462,8 +462,8 @@ A plugin adds to a site what its theme does not: comments, analytics, search,
 math. It lives in `plugins/`, one folder each, and runs once it is listed
 under `plugins.enabled` in `kite.yaml`, in the order it runs in. The studio's
 Plugins screen installs one from a zip archive, turns it on and off, edits its
-settings and removes it, and says before a plugin is turned on what it adds to
-pages and which other sites its code loads from. The command line does the
+settings and removes it, and states, before a plugin is turned on, what it adds
+to pages and which other sites its code loads from. The command line does the
 same:
 
 ```bash
@@ -494,7 +494,7 @@ kite plugin pack greet    # the zip a release carries, in greet/dist/
 
 A plugin is a folder with a `plugin.yaml`. Files under its `assets/` are
 published with the site at `plugins/<id>/`, and language packs in `i18n/`,
-under the key `plugin`, translate what the studio says about it, as a theme's
+under the key `plugin`, translate what the studio reports about it, as a theme's
 do.
 
 ```yaml
@@ -639,7 +639,7 @@ asks first, or takes `--yes`.
 
 The index is fetched at most once an hour, with `--refresh` to fetch it at
 once, and kept in `.kite/cache/apps` with the archives fetched. Without a
-network the copy kept is used, and Kite says how old it is. `apps.index` in
+network the copy kept is used, and Kite reports how old it is. `apps.index` in
 `kite.yaml`, or `KITE_APPS_URL`, names another index to install from, such as
 a copy on a network without the internet. Kite reads the signature from the
 index's address with `.minisig` added, so a copy of Kite's own index keeps
@@ -829,7 +829,7 @@ of content is declared for it; see [Content types](#content-types).
 A slug may hold a path: a page whose slug is `projects/tideline` is published
 at `/projects/tideline/`, as pages kept in folders were in Hugo. An item whose
 address is already another page's, such as a page called `posts`, stops the
-build and says which.
+build and names which.
 
 Kite reads the front matter keys Hugo writes as its own: `date` is when an
 item was published, `lastmod` when it last changed, `draft: true` makes it a
@@ -858,10 +858,10 @@ aliases: [/2019/05/trip/, /travel/trip.html, old-trip]
 
 Each alias is a path from the site's root, or, without a leading slash, one
 beside the item's own address, and a page is published there that sends a
-browser on to the item at once and tells search engines which address to
+browser on to the item at once and reports to search engines which address to
 keep. It is a page rather than a redirect of the host's, so it works on
 GitHub Pages too, and `kite serve` answers with the same page. An alias that
-is another page's address stops the build and says which.
+is another page's address stops the build and names which.
 
 Kite's feed is `rss.xml`, and Hugo's was `index.xml`, with one more per
 section. Feed readers do not follow a page that redirects, so to keep the
@@ -913,7 +913,7 @@ can change your mind about.
 `kite init` writes a GitHub Pages workflow that builds with `--verify`, so a
 site that would deploy differently on a second run fails before it is
 published, and with the Kite release the site pins (see below). Turn Pages on under **Settings → Pages → Source → GitHub Actions**
-and a push to `main` deploys. Once a deploy is live, the workflow tells the
+and a push to `main` deploys. Once a deploy is live, the workflow notifies the
 update services the site lists; see [Pinging after a deploy](#pinging-after-a-deploy).
 
 Until it has a domain of its own, a repository's site lives at
@@ -935,7 +935,7 @@ for 60 days. Turn it back on under the **Actions** tab. Deploying on push is
 a separate workflow for exactly this reason, and keeps working either way.
 
 The studio follows a publish from the commit through the push to the
-deployment, and asks two witnesses whether the pushed commit is live.
+deployment, and queries two witnesses for whether the pushed commit is live.
 
 The first is the site itself. A build writes `kite-build.json` at the root of
 the site, naming the commit it was built from: the one the host names, from
@@ -953,17 +953,17 @@ The second is the host, for a public repository on GitHub. The studio asks
 GitHub's API, anonymously and read-only, what the host recorded: Pages and
 Vercel record deployments, and Cloudflare Pages a check run on the commit it
 built. A commit deployed to Pages and somewhere else too is reported from
-Pages. Only the host can say a deployment failed. GitHub gives an anonymous
+Pages. Only the host reports a deployment failed. GitHub gives an anonymous
 caller sixty requests an hour, shared with everything else on the same
-network, so the studio asks at most once a minute, every minute while a
+network, so the studio makes at most one request a minute, every minute while a
 deployment is under way and every five once it has taken ten; when the
-hour's allowance is nearly spent, it says when it will ask again, unless the
-site has answered meanwhile. A repository connected with a token is asked
-with that token instead, which reaches a private one and lifts the allowance
+hour's allowance is nearly spent, it reports when the next request is due,
+unless the site has answered meanwhile. A repository connected with a token is
+asked with that token instead, which reaches a private one and lifts the allowance
 to 5,000 requests an hour; see [Connecting GitHub](#connecting-github).
 
-When neither can tell, the studio says the host does not report deployments
-instead of waiting.
+When neither can tell, the studio reports that the host does not report
+deployments instead of waiting.
 
 `kite build` prints when the next scheduled post falls due. On any other host
 that is when the site has to be built again, because a static site only shows
@@ -1011,7 +1011,7 @@ pushes over https and with the studio's questions about deployments, and
 nowhere else; git gets it through its environment, never in a file or among
 a command's arguments. A remote over ssh keeps using ssh. Where git has no
 identity of its own, as in a container, commits are made by the connected
-account at its noreply address. `kite github` says where things stand, and
+account at its noreply address. `kite github` reports where things stand, and
 `kite github disconnect` forgets the kept token.
 
 A connect that would have to change something it should not stops before
