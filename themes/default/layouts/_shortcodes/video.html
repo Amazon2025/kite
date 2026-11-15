@@ -1,0 +1,29 @@
+{{- /*
+  A video the body shows: {{< video src="clip.mp4" poster="clip.jpg" >}}.
+
+  The file lives beside the page, in its bundle, so a bare name resolves
+  against the page's own address; a file under static/ starts with a slash.
+  src is required. poster, caption, width, loop, muted, captions and lang
+  are not. The type is read from the extension unless the call names one, so
+  webm and ogg need nothing extra.
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- with $src -}}
+  {{- $type := $.Get "type" -}}
+  {{- if not $type -}}
+    {{- if str.HasSuffix ".webm" . -}}{{- $type = "video/webm" -}}
+    {{- else if str.HasSuffix ".ogg" . -}}{{- $type = "video/ogg" -}}
+    {{- else -}}{{- $type = "video/mp4" -}}{{- end -}}
+  {{- end -}}
+<figure class="video">
+  <video controls playsinline preload="metadata"{{ with $.Get "poster" }} poster="{{ . }}"{{ end }}{{ with $.Get "width" }} width="{{ . }}"{{ end }}{{ if $.Get "loop" }} loop{{ end }}{{ if $.Get "muted" }} muted{{ end }}>
+    <source src="{{ . }}" type="{{ $type }}">
+    {{- with $.Get "captions" }}
+    <track kind="captions" default src="{{ . }}"{{ with $.Get "lang" }} srclang="{{ . }}"{{ end }}>
+    {{- end }}
+  </video>
+  {{ with $.Get "caption" }}<figcaption>{{ . }}</figcaption>{{ end }}
+</figure>
+{{- else -}}
+<p class="video-missing">video: the call needs a src</p>
+{{- end -}}
