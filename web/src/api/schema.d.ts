@@ -650,6 +650,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Say how much the project keeps on disk. */
+        get: operations["getStorage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/taxonomies": {
         parameters: {
             query?: never;
@@ -1253,6 +1270,10 @@ export interface components {
             noindex?: boolean;
             timezone?: string;
             title: string;
+        };
+        Storage: {
+            content: number;
+            files: number;
         };
         Summary: {
             /** Format: date-time */
@@ -4795,6 +4816,35 @@ export interface operations {
             };
             /** @description Failed. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorBody"];
+                };
+            };
+        };
+    };
+    getStorage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The bytes and files under content/. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Storage"];
+                };
+            };
+            /** @description Not signed in. */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

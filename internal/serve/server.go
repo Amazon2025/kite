@@ -355,6 +355,9 @@ func (s *Server) view() api.View {
 	v.WordCount = s.wordCount
 	v.Export = s.export
 	v.Bundle = s.bundle
+	v.Storage = func(ctx context.Context) (api.Storage, error) {
+		return diskUsage(ctx, filepath.Join(s.root, contentDir))
+	}
 	return v
 }
 

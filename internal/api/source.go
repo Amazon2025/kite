@@ -94,6 +94,10 @@ type View struct {
 	// where the site cannot be built.
 	Export func(ctx context.Context, dir string) error
 
+	// Storage measures what the project keeps on disk. It is nil where the
+	// project cannot be measured.
+	Storage func(ctx context.Context) (Storage, error)
+
 	// Publisher moves committed content onward. It is nil when the project
 	// has none configured, which is a perfectly ordinary way to run: an
 	// author may prefer to commit themselves.

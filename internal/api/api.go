@@ -179,6 +179,7 @@ func (s *Server) routes() []route {
 		{http.MethodDelete, "/account/sessions", s.handleEndSessions},
 		{http.MethodGet, "/site", s.handleSite},
 		{http.MethodPost, "/site/pin", s.handlePin},
+		{http.MethodGet, "/storage", s.handleStorage},
 		{http.MethodGet, "/content-types", s.handleContentTypes},
 		{http.MethodGet, "/publish", s.handlePublishState},
 		{http.MethodPost, "/publish", s.handlePublish},

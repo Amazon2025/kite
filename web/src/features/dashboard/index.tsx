@@ -4,8 +4,10 @@ import { PencilLineIcon } from "@phosphor-icons/react";
 import { useI18n, type Key } from "@/i18n";
 import { useContentTypes, useSite, useWritable } from "@/hooks/useContents";
 import { useKindLabel } from "@/hooks/useKindLabel";
+import { useStorage } from "@/hooks/useStorage";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useSession } from "@/hooks/useSession";
+import { sizeOf } from "@/lib/bytes";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/layout/app-header";
 import { Main } from "@/components/layout/main";
@@ -19,6 +21,7 @@ export function Dashboard() {
   const site = useSite();
   const writable = useWritable();
   const session = useSession();
+  const storage = useStorage();
   const types = useContentTypes();
   const kindLabel = useKindLabel();
   useDocumentTitle(t("nav.dashboard"));
@@ -34,6 +37,12 @@ export function Dashboard() {
   const name = session.data?.required ? session.data.user : undefined;
   const today = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", weekday: "long" }).format(now);
 
+  // How much the project holds says nothing until it has been measured, so a
+  // dashboard that is still asking says less rather than zero.
+  const held = storage.data
+    ? t("dashboard.storage", { size: sizeOf(storage.data.content), count: storage.data.files })
+    : undefined;
+
   return (
     <>
       <AppHeader />
@@ -42,7 +51,7 @@ export function Dashboard() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="min-w-0">
             <p className="mb-1.5 truncate text-sm text-muted-foreground">
-              {[today, site.data?.title].filter(Boolean).join(" · ")}
+              {[today, site.data?.title, held].filter(Boolean).join(" · ")}
             </p>
             <h2 className="text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
               {name ? t("dashboard.greeting", { greeting, name }) : greeting}

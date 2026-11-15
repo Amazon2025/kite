@@ -321,6 +321,11 @@ func openAPI() *document {
 					"when they can be fetched, so that kitew and the deploy build the site with it.",
 				Responses: ok(ref(KiteRelease{}), "Which release builds the site now.", "405", "409"),
 			}},
+			"/storage": {Get: &operation{
+				OperationID: "getStorage",
+				Summary:     "Say how much the project keeps on disk.",
+				Responses:   ok(ref(Storage{}), "The bytes and files under content/."),
+			}},
 			"/content-types": {Get: &operation{
 				OperationID: "listContentTypes",
 				Summary:     "List content types and the field schema forms are generated from.",

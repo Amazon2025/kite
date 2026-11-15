@@ -171,6 +171,8 @@ export const en = {
   "dashboard.noDrafts": "No drafts in progress",
   "dashboard.allPublished": "Everything is published",
   "dashboard.refresh": "Refresh",
+  "dashboard.storage_one": "{size} in one file",
+  "dashboard.storage_other": "{size} in {count} files",
   "dashboard.refreshed": "Up to date",
   "dashboard.refreshFailed": "Could not refresh. Try again.",
   "dashboard.latest": "Latest {kind}",

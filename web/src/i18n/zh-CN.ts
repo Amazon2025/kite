@@ -166,6 +166,8 @@ export const zhCN: Record<keyof typeof en, string> = {
   "dashboard.noDrafts": "没有未完成的草稿",
   "dashboard.allPublished": "所有改动都已发布",
   "dashboard.refresh": "刷新",
+  "dashboard.storage_one": "{size}，共 1 个文件",
+  "dashboard.storage_other": "{size}，共 {count} 个文件",
   "dashboard.refreshed": "数据已刷新",
   "dashboard.refreshFailed": "刷新失败，请重试。",
   "dashboard.latest": "最新{kind}",
