@@ -23,6 +23,7 @@ export const zhCN: Record<keyof typeof en, string> = {
   "nav.menus": "菜单",
   "nav.apps": "应用中心",
   "footer.poweredBy": "由 Kite 驱动",
+  "footer.update": "最新 {version}",
   "footer.links": "Kite 的链接",
   "footer.docs": "文档",
   "footer.issues": "问题反馈",

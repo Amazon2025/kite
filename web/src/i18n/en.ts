@@ -25,6 +25,7 @@ export const en = {
   "nav.menus": "Menus",
   "nav.apps": "App center",
   "footer.poweredBy": "Powered by Kite",
+  "footer.update": "Newest {version}",
   "footer.links": "About Kite",
   "footer.docs": "Docs",
   "footer.issues": "Report an issue",

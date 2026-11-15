@@ -15,6 +15,7 @@ export function StudioFooter({ className }: { className?: string }) {
   const { t } = useI18n()
   const site = useSite()
   const version = site.data?.version
+  const newest = site.data?.kite?.latest
 
   return (
     <footer
@@ -33,6 +34,17 @@ export function StudioFooter({ className }: { className?: string }) {
         >
           {t('footer.poweredBy')}
         </Outside>
+        {/* The version is on the page, not only in the tooltip, because the
+            badge beside it only makes sense next to a number a reader can see. */}
+        {version && <span className='tabular-nums'>{version}</span>}
+        {newest && (
+          <Outside
+            href={site.data?.kite?.latest_url ?? `${website}/docs/`}
+            className='rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/15'
+          >
+            {t('footer.update', { version: newest })}
+          </Outside>
+        )}
       </p>
       {/* Each link is a quiet button, so its padding is pulled back out to
           line the links up with the rule's end, and on a phone, where they
