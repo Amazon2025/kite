@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -11,11 +12,14 @@ import (
 
 	"github.com/kite-plus/kite/internal/buildinfo"
 	"github.com/kite-plus/kite/internal/content"
+	"github.com/kite-plus/kite/internal/kitew"
+	"github.com/kite-plus/kite/internal/latest"
 	"github.com/kite-plus/kite/internal/project"
 )
 
 func newVersionCmd() *cobra.Command {
-	return &cobra.Command{
+	var check bool
+	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print version information",
 		Args:  cobra.NoArgs,
@@ -30,14 +34,58 @@ func newVersionCmd() *cobra.Command {
 				"pluginABI": buildinfo.PluginABIVersion,
 				"buildABI":  buildinfo.BuildABIVersion,
 			}
+			note := ""
+			if check {
+				note = newestNote(cmd.Context(), info)
+			}
 			if jsonOut(cmd) {
 				return writeJSON(cmd.OutOrStdout(), info)
 			}
 			printf(cmd, "kite %s (%s, %s) %s %s\n", buildinfo.Version, buildinfo.Commit,
 				buildinfo.Date, runtime.Version(), info["platform"])
 			printf(cmd, "theme api %s, plugin abi %d\n", buildinfo.ThemeAPIVersion, buildinfo.PluginABIVersion)
+			if check {
+				printf(cmd, "%s\n", note)
+			}
 			return nil
 		},
+	}
+	cmd.Flags().BoolVarP(&check, "check", "c", false,
+		"ask GitHub whether a newer release is out")
+	return cmd
+}
+
+// newestNote answers whether a newer release is out, keeping what it found in
+// info for --json and returning the line a person reads.
+//
+// The answer is cached for a day, so a check run twice asks GitHub once. A
+// build from source has no release to compare with, so the newest one is named
+// rather than a verdict about it.
+func newestNote(ctx context.Context, info map[string]any) string {
+	if latest.Off() {
+		info["check"] = "off"
+		return "update checks are off (KITE_NO_UPDATE_CHECK)"
+	}
+
+	newest, err := latest.New().Check(ctx)
+	if err != nil {
+		info["check"] = "failed"
+		return "could not ask GitHub for the newest release: " + err.Error()
+	}
+	info["newest"] = newest.Version
+	info["newestURL"] = newest.URL
+
+	running, released := kitew.Release(buildinfo.Version)
+	switch {
+	case !released:
+		info["check"] = "source"
+		return "this is a build from source; the newest release is " + newest.Version + " (" + newest.URL + ")"
+	case latest.Newer(newest.Version, running):
+		info["check"] = "newer"
+		return "a newer release is out: " + newest.Version + " (" + newest.URL + ")"
+	default:
+		info["check"] = "current"
+		return "this is the newest release"
 	}
 }
 
