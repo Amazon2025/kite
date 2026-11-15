@@ -877,8 +877,11 @@ Go 和 Kite 的步骤。
 
 `kite version` 打印这个构建的信息。`kite version --check` 向 GitHub 发一次请求，输出这个
 构建是否就是最新发布、比它新的发布是哪个，或者对源码构建来说当前最新的发布是哪个。
+`--short` 只输出版本号本身，供脚本读取。用 `make build` 构建的二进制带着所在 tag 的版本，
+例如 `0.1.12`；用其它方式构建的报告 `dev`，并给出编译所用的提交。
 
 ```bash
+kite version --short          # 只输出版本号
 kite version --check
 kite version --check --json   # check、newest、newestURL
 ```

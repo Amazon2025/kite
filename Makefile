@@ -1,6 +1,8 @@
 GO       ?= go
 BINARY   ?= kite
-VERSION  ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+# The leading v of a tag is dropped so that a build made here reads like a
+# released one: 0.1.12 at the tag, 0.1.12-30-g5208135 thirty commits after it.
+VERSION  ?= $(shell git describe --tags --always --dirty 2>/dev/null | sed 's/^v//' || echo dev)
 COMMIT   ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo none)
 DATE     ?= $(shell git log -1 --format=%cI 2>/dev/null || echo unknown)
 LDFLAGS  := -s -w \

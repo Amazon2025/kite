@@ -1069,8 +1069,12 @@ and moving the pin are yours to do. A build from source does not check, and
 `kite version` prints what this build is. `kite version --check` sends one
 request to GitHub and prints whether this build is the newest release, which
 release is newer, or, for a build from source, which release is the newest.
+`--short` prints the version alone, for a script to read. A binary from
+`make build` carries the version of the tag it is on, such as `0.1.12`; one
+built another way reports `dev` and names the revision it was compiled from.
 
 ```bash
+kite version --short          # the version, alone
 kite version --check
 kite version --check --json   # check, newest and newestURL
 ```

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -18,12 +19,17 @@ import (
 )
 
 func newVersionCmd() *cobra.Command {
-	var check bool
+	var check, short bool
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print version information",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			stampVCS()
+			if short {
+				printf(cmd, "%s\n", buildinfo.Version)
+				return nil
+			}
 			info := map[string]any{
 				"version":   buildinfo.Version,
 				"commit":    buildinfo.Commit,
@@ -52,7 +58,38 @@ func newVersionCmd() *cobra.Command {
 	}
 	cmd.Flags().BoolVarP(&check, "check", "c", false,
 		"ask GitHub whether a newer release is out")
+	cmd.Flags().BoolVarP(&short, "short", "s", false,
+		"print the version alone")
 	return cmd
+}
+
+// stampVCS fills the commit and the date from the VCS information the Go
+// toolchain embeds, for a binary linked without the flags make build passes.
+// A release number cannot be recovered that way, so such a build still
+// reports itself as dev.
+func stampVCS() {
+	if buildinfo.Commit != "none" {
+		return
+	}
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return
+	}
+	for _, s := range info.Settings {
+		switch s.Key {
+		case "vcs.revision":
+			if len(s.Value) > 12 {
+				s.Value = s.Value[:12]
+			}
+			buildinfo.Commit = s.Value
+		case "vcs.time":
+			buildinfo.Date = s.Value
+		case "vcs.modified":
+			if s.Value == "true" {
+				buildinfo.Commit += "-dirty"
+			}
+		}
+	}
 }
 
 // newestNote answers whether a newer release is out, keeping what it found in
