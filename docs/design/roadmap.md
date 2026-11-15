@@ -87,6 +87,7 @@
 | 13 | serve 没有 RSS 和 sitemap | **已解决。** 核对第 12 项时发现：`kite serve` 对 `/rss.xml` 和 `/sitemap.xml` 都返回 404，而每个页面都链接着 RSS。两者由 build 结束时的 completion hook 生成，serve 从来不调用这些 hook；build 和 serve 的比对只看 `.html`，所以一直没被发现。现在 serve 在第一次有请求用到时，用和 build 相同的代码算出每页交给 hook 的信息（不画模板，2000 篇的站点约 120ms，完整构建约 1 秒），跑同一组 hook，结果留在内存里，直到下一次重新规划：文件改动和定时文章到点都会让它重算。同名时 hook 的产物优先于静态文件，和 build 后写覆盖先写一致。测试：`TestServedFilesAreByteIdenticalToBuiltOnes`（改为比较 build 写出的每个文件）、`TestTheFeedFollowsTheSite`、`TestExtrasAreWhatABuildWrites`；`kite theme verify` 也改为比较全部文件 | P2 |
 | 14 | 部署在带子路径的地址上时站内链接失效 | **已解决。** 搭 `website` 时发现：站内链接都从域名根开始，`baseURL` 里的路径被忽略，GitHub Pages 的项目站点（没有自定义域名时在 `user.github.io/repo/` 下）部署出来导航、文章链接、RSS 和图片全部 404。现在 `url.Resolver` 生成的每个链接（文章、首页、列表、分类、term、分页）都以 `baseURL` 的路径开头，`.Permalink`、sitemap 和 RSS 里的绝对地址随之正确；输出文件的位置不变，由托管平台把这段路径映射到发布目录。`kite serve` 在同一路径下预览：访问 `/` 跳到首页，路径以外的地址按 404 处理，漏掉路径的链接在本地就会失效，而不是部署后才发现。主题新增 `url.For`（首页、列表、分类、term）和 `url.Rel`、`url.Abs`（站内任意路径，如 `rss.xml`），默认主题里写死的 `/`、`/posts/`、`/rss.xml` 和拼出来的分类链接都改用它们，导航里作者填的路径也经过 `url.Rel`；顺带修了列表页的 `.Page.RelPermalink`（原来是 `//posts/`）。`kite theme verify` 的夹具站点改为发布在 `/blog/` 下，并报告从域名根开始写的链接。正文里作者自己写的根路径链接（如 `[x](/posts/y/)`）仍原样发布，和 Hugo 一样。测试：`TestABasePathPrefixesEveryLink`、`TestOutputPathIsTheInverseOfTheURL`、`TestASiteUnderAPathLinksWithinIt`、`TestServedFilesAreByteIdenticalToBuiltOnes/path`、`TestASiteUnderAPathIsServedUnderIt`、`TestAThemeThatLinksToTheRootOfTheHostIsCaught` | P1 |
 | 15 | 默认主题没有视频的短代码模板 | **已解决。** 默认主题加了 `layouts/_shortcodes/video.html`：`src` 必填，`poster`、`caption`、`width`、`loop`、`muted`、`captions`、`lang` 可选，类型跟随后缀，宽度是提示、窄屏由主题的 `max-width` 覆盖；样式加在 `layouts/_partials/style.html`。调用照旧 `{{< video src="clip.mp4" >}}` | P2 |
+| 16 | 后台没有「存储空间」 | **已解决。** `GET /storage` 由站点统计 `content/` 下的字节和文件数（`internal/serve/storage.go`），仪表盘顶栏显示；请求取消时遍历立即停下。测试：`TestStorageSaysHowMuchTheProjectHolds`、`TestDiskUsageAddsEveryFileUnderIt`、`TestDiskUsageStopsWhenTheRequestDoes` | P2 |
 
 ## 5. 分阶段计划
 
@@ -116,7 +117,7 @@
 | 用户 | 不做多用户：博客只有一个站长，后台只有一个账号（2026-09-26 定），在「设置 → 账户」里管理 | 不做 |
 | 可见性、备份、上次备份 | 文章加密、私密文章和数据库备份都要服务端部署，纯静态部署不提供 | M7 |
 | 插件、插件可更新 | 插件第一版已完成（后台「系统 → 插件」）；更新提示随应用中心 | 插件：已完成；更新：应用中心（#16） |
-| 存储空间 | 统计内容目录和上传文件的大小 | 阶段 1 可做 |
+| 存储空间 | 已完成：`GET /storage` 统计 `content/` 的字节数与文件数，仪表盘顶栏显示 | 已完成 |
 | 版本号旁的「最新」 | 查询 GitHub Releases | 阶段 1 可做 |
 | 总访问量、访问量列、RSS 订阅数 | 纯静态站点自己无法统计。要么接第三方统计服务（如 Umami、Plausible），要么等动态模式按请求统计；RSS 订阅数基本拿不到 | 待定 |
 | 文章列表里的「置顶」 | 列表接口返回 `pinned` | 已完成（§4 第 9 项） |
