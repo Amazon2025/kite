@@ -1,6 +1,6 @@
 # Kite 路线图与实现现状
 
-> 状态：持续更新 · 最近核对：2026-10-10
+> 状态：持续更新 · 最近核对：2026-11-15
 > 里程碑的原始定义见 [architecture.md §28 Roadmap](architecture.md#28-roadmap)，验收标准见 [§29](architecture.md#29-每阶段验收标准)。
 > 本文记录的是**对照代码和测试逐项核实后**的进度，不是对计划的复述；有疑问的项都实际运行确认过。
 
@@ -86,6 +86,7 @@
 | 12 | Hugo 里日期在未来的文章会立即公开 | **已解决。** 日期在未来的 `published` 和 `scheduled` 一样，等到发布时间才公开，和 Hugo、Jekyll 的默认做法一致；没有日期的 `published` 仍然立即公开。Kite 把没有 `status` 的文件读成 `published`、把 Hugo 的 `date` 读成发布时间，所以从 Hugo 迁过来的站点，排在未来的文章会按时上线：serve 到点后的第一个请求重新规划页面，静态站点由构建报告的 `next_due` 和 `scheduled.yml` 在到点后一小时内补上。规则在 `Content.IsPublic` 和 SQL 过滤里各有一份，`TestPublicAtAgreesWithIsPublic` 保证两者一致。测试：`TestAPublishedPostDatedLaterWaitsForItsDate`、`TestAScheduledPostIsServedOnceItsTimeComes/published` | P2 |
 | 13 | serve 没有 RSS 和 sitemap | **已解决。** 核对第 12 项时发现：`kite serve` 对 `/rss.xml` 和 `/sitemap.xml` 都返回 404，而每个页面都链接着 RSS。两者由 build 结束时的 completion hook 生成，serve 从来不调用这些 hook；build 和 serve 的比对只看 `.html`，所以一直没被发现。现在 serve 在第一次有请求用到时，用和 build 相同的代码算出每页交给 hook 的信息（不画模板，2000 篇的站点约 120ms，完整构建约 1 秒），跑同一组 hook，结果留在内存里，直到下一次重新规划：文件改动和定时文章到点都会让它重算。同名时 hook 的产物优先于静态文件，和 build 后写覆盖先写一致。测试：`TestServedFilesAreByteIdenticalToBuiltOnes`（改为比较 build 写出的每个文件）、`TestTheFeedFollowsTheSite`、`TestExtrasAreWhatABuildWrites`；`kite theme verify` 也改为比较全部文件 | P2 |
 | 14 | 部署在带子路径的地址上时站内链接失效 | **已解决。** 搭 `website` 时发现：站内链接都从域名根开始，`baseURL` 里的路径被忽略，GitHub Pages 的项目站点（没有自定义域名时在 `user.github.io/repo/` 下）部署出来导航、文章链接、RSS 和图片全部 404。现在 `url.Resolver` 生成的每个链接（文章、首页、列表、分类、term、分页）都以 `baseURL` 的路径开头，`.Permalink`、sitemap 和 RSS 里的绝对地址随之正确；输出文件的位置不变，由托管平台把这段路径映射到发布目录。`kite serve` 在同一路径下预览：访问 `/` 跳到首页，路径以外的地址按 404 处理，漏掉路径的链接在本地就会失效，而不是部署后才发现。主题新增 `url.For`（首页、列表、分类、term）和 `url.Rel`、`url.Abs`（站内任意路径，如 `rss.xml`），默认主题里写死的 `/`、`/posts/`、`/rss.xml` 和拼出来的分类链接都改用它们，导航里作者填的路径也经过 `url.Rel`；顺带修了列表页的 `.Page.RelPermalink`（原来是 `//posts/`）。`kite theme verify` 的夹具站点改为发布在 `/blog/` 下，并报告从域名根开始写的链接。正文里作者自己写的根路径链接（如 `[x](/posts/y/)`）仍原样发布，和 Hugo 一样。测试：`TestABasePathPrefixesEveryLink`、`TestOutputPathIsTheInverseOfTheURL`、`TestASiteUnderAPathLinksWithinIt`、`TestServedFilesAreByteIdenticalToBuiltOnes/path`、`TestASiteUnderAPathIsServedUnderIt`、`TestAThemeThatLinksToTheRootOfTheHostIsCaught` | P1 |
+| 15 | 默认主题没有视频的短代码模板 | **已解决。** 默认主题加了 `layouts/_shortcodes/video.html`：`src` 必填，`poster`、`caption`、`width`、`loop`、`muted`、`captions`、`lang` 可选，类型跟随后缀，宽度是提示、窄屏由主题的 `max-width` 覆盖；样式加在 `layouts/_partials/style.html`。调用照旧 `{{< video src="clip.mp4" >}}` | P2 |
 
 ## 5. 分阶段计划
 
