@@ -872,8 +872,16 @@ Go 和 Kite 的步骤。
 发布版的 Kite 运行 `kite serve` 或 `kite run` 时，每天最多问一次 GitHub 有没有更新的版本，
 答案存在用户缓存目录的 `kite/latest.json` 里。有新版本时，服务启动时和日志里会提示，后台在
 每个浏览器里提示一次，并在「系统 → 部署」里一直显示，直到服务换成新版本。它只负责提醒：
-替换程序（在容器里是拉取新镜像）和修改固定的版本都由你来做。从源码构建的 Kite 不会检查，
+替换程序（在容器里是拉取新镜像）和修改固定的版本都由你来做。从源码构建的 Kite 自己不会问，
 设置 `KITE_NO_UPDATE_CHECK=1` 可以关闭检查。
+
+`kite version` 打印这个构建是什么；`kite version --check` 按需去问一次，源码构建也一样，
+并说明它是否就是最新发布、有新的是哪个，或者对源码构建来说当前最新的发布是哪一个。
+
+```bash
+kite version --check
+kite version --check --json   # check、newest、newestURL
+```
 
 ### 部署之后通知更新服务
 

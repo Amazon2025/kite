@@ -1063,8 +1063,17 @@ day whether a newer release is out, and keeps the answer in the user's cache
 log, and the studio says so once in each browser and keeps saying so under
 **System → Deploy** until the server runs it. It only tells: replacing the
 binary, or pulling the new image in a container, and moving the pin are yours
-to do. A build from source never asks, and `KITE_NO_UPDATE_CHECK=1` turns the
-check off.
+to do. A build from source never asks on its own, and `KITE_NO_UPDATE_CHECK=1`
+turns the check off.
+
+`kite version` prints what this build is, and `kite version --check` asks on
+demand — a build from source included — saying whether this one is the newest
+release, which one is newer, or, for a source build, which release is out.
+
+```bash
+kite version --check
+kite version --check --json   # check, newest and newestURL
+```
 
 ### Pinging after a deploy
 
