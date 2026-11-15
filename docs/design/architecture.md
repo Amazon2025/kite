@@ -438,7 +438,7 @@ rm -rf .kite/cache && kite index
 
 - 编辑器用"写临时文件 + rename"原子保存，会直接让被监听的 inode 失效，watch 静默失效。fsnotify 官方的建议就是**监听父目录而非文件**。
 - macOS FSEvents 会合并快速变更，且不像 inotify 那样配对 MOVED_FROM / MOVED_TO。
-- `git checkout` 会在毫秒内产生上千事件，撑爆队列。
+- `git checkout` 会在毫秒内产生上千事件，超出队列容量。
 
 **mtime 不是安全的缓存键。** 直接抄 Git 的 "racy git" 规则 `[EV]`：
 
@@ -914,7 +914,7 @@ SQLite 用 **`modernc.org/sqlite`**（纯 Go，零 CGO，交叉编译不破，�
 
 **V1 的媒体功能只有一件事：拖入图片 → 拷进 page bundle → 插入路径。其余全部推迟。**
 
-"完整媒体库"（上传 + 缩放 + EXIF 清理 + srcset + 存储抽象 + 孤儿回收 + LFS 交互）本身是一个子产品，硬塞进 V1 会拖垮进度。
+"完整媒体库"（上传 + 缩放 + EXIF 清理 + srcset + 存储抽象 + 孤儿回收 + LFS 交互）本身是一个子产品，一并放进 V1 会拖慢进度。
 
 ### 20.3 MediaService（接口先定，驱动后补）
 

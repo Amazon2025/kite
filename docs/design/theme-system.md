@@ -821,7 +821,7 @@ resource_hash = SHA256( source_bytes ‖ transform_chain_spec ‖ transform_para
 | **主题继承 / 子主题** | **极难收回**。一旦支持，查找顺序要多一个维度、覆盖语义要处理多层、`--explain-lookup` 的输出会失控。用户真正的需求（改一点样式）用站点 `layouts/` 覆盖 + settings 就能满足。 |
 | SCSS / PostCSS 工具链 | 要么引入 Node 依赖（破坏 Single Binary），要么嵌一个不完整的实现（比没有更糟）。主题自己编译好再发布。 |
 | 主题提供 Go 代码 / 原生插件 | 扩展走 [plugin-system.md](plugin-system.md)，主题只管渲染。 |
-| Admin 里的在线主题编辑 | 会让"主题是 Git 里的文件"这个模型崩掉。 |
+| Admin 里的在线主题编辑 | 会让"主题是 Git 里的文件"这个模型不再成立。 |
 | 带命名参数校验的 shortcode | v1 只做最简单的 shortcode；复杂的交给插件的节点匹配器。 |
 | 每主题自定义内容类型 | 内容模型属于站点，不属于主题。主题只能**声明它支持哪些类型**。 |
 | 主题市场 / 注册表 | V4。v1 用 Git URL + checksum 安装。 |
