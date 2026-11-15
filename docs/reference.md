@@ -1225,6 +1225,11 @@ make perf       # time a 2000-post site against the design's latency targets
 make e2e        # drive the admin in Chromium against a binary built with it
 ```
 
+`make check` is the gate: the linter in it catches what `go vet` and `gofmt` do
+not — a misspelled word (the house style is US English), a symbol nothing uses,
+an error that is not wrapped. Running only the steps that look relevant is how a
+change reaches review failing one of those.
+
 `make web` needs Node and pnpm, both pinned exactly — the versions live in
 `web/.nvmrc` and `web/package.json`. The rest of the build needs neither. A
 binary built without it works and says the admin is missing rather than failing
