@@ -8,7 +8,7 @@
 
 ## Context：Kite 要解决什么
 
-现有的内容发布工具被劈成互不相容的两半：
+现有的内容发布工具分成两类互不通用的产品：
 
 - **SSG 阵营**（Hugo / Hexo / Astro）：Markdown + Git + 静态托管的工程体验极好，但内容管理体验差——写文章要直接编辑文件，没有真正的后台，媒体/分类/主题管理不直观，普通创作者门槛高。
 - **CMS 阵营**（WordPress / Halo / Typecho）：后台完整、在线写作、点击发布，但天然绑定 Server Runtime + Database，和 Git / Markdown / 静态托管的结合非常别扭。
@@ -29,7 +29,7 @@ Kite 的目标结果：
 
 ### 0.1 Store × Runtime 是两个正交轴
 
-现有产品的根本缺陷不是功能少，而是把两件本应正交的事耦死了：
+现有产品的根本缺陷不是功能少，而是把两件本应正交的事绑成了一件：
 
 | | **Build Runtime**（产出静态 HTML） | **Serve Runtime**（HTTP 动态渲染） |
 |---|---|---|
@@ -436,7 +436,7 @@ rm -rf .kite/cache && kite index
 
 **为什么 fsnotify 不能当正确性机制** `[EV]`：
 
-- 编辑器用"写临时文件 + rename"原子保存，会直接干掉被监听的 inode，watch 静默失效。fsnotify 官方的建议就是**监听父目录而非文件**。
+- 编辑器用"写临时文件 + rename"原子保存，会直接让被监听的 inode 失效，watch 静默失效。fsnotify 官方的建议就是**监听父目录而非文件**。
 - macOS FSEvents 会合并快速变更，且不像 inotify 那样配对 MOVED_FROM / MOVED_TO。
 - `git checkout` 会在毫秒内产生上千事件，撑爆队列。
 
@@ -496,7 +496,7 @@ my-blog/
 
 ## 10. Static / Dynamic 的统一方式
 
-统一不是靠"写两套再抹平"，而是靠**四个单一来源**。任何一个破掉，两种模式立刻分叉。
+统一不是靠"写两套再对齐"，而是靠**四个单一来源**。任何一个出问题，两种模式立刻分叉。
 
 1. **单一读模型**（[§0.2](#02-只有一个读模型read-model)）—— 最根本的一条
 2. **单一渲染管线** —— `kite build` 和 `kite serve` 调用完全相同的 `Renderer`
