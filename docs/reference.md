@@ -1057,18 +1057,18 @@ Kite.
 
 ### Newer releases of Kite
 
-A released Kite running `kite serve` or `kite run` asks GitHub at most once a
-day whether a newer release is out, and keeps the answer in the user's cache
-(`kite/latest.json`). When one is, the server says so as it starts and in its
-log, and the studio says so once in each browser and keeps saying so under
-**System → Deploy** until the server runs it. It only tells: replacing the
-binary, or pulling the new image in a container, and moving the pin are yours
-to do. A build from source never asks on its own, and `KITE_NO_UPDATE_CHECK=1`
-turns the check off.
+A released Kite running `kite serve` or `kite run` makes at most one request a
+day to GitHub for the newest release, and records the answer in the user's
+cache (`kite/latest.json`). When a newer one exists, the server reports it at
+startup and in its log, and the studio reports it once in each browser and
+keeps reporting it under **System → Deploy** until the server runs it. Kite
+only reports: replacing the binary, or pulling the new image in a container,
+and moving the pin are yours to do. A build from source does not check, and
+`KITE_NO_UPDATE_CHECK=1` turns the check off.
 
-`kite version` prints what this build is, and `kite version --check` asks on
-demand — a build from source included — saying whether this one is the newest
-release, which one is newer, or, for a source build, which release is out.
+`kite version` prints what this build is. `kite version --check` sends one
+request to GitHub and prints whether this build is the newest release, which
+release is newer, or, for a build from source, which release is the newest.
 
 ```bash
 kite version --check
